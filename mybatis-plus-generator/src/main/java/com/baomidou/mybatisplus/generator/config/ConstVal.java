@@ -31,6 +31,8 @@ public interface ConstVal {
 
     String ENTITY = "Entity";
     String SERVICE = "Service";
+    String DAL = "Dal";
+    String BASEDAL = "BaseDal";
     String SERVICE_IMPL = "ServiceImpl";
     String MAPPER = "Mapper";
     String XML = "Xml";
@@ -38,6 +40,7 @@ public interface ConstVal {
 
     String ENTITY_PATH = "entity_path";
     String SERVICE_PATH = "service_path";
+    String DAL_PATH = "dal_path";
     String SERVICE_IMPL_PATH = "service_impl_path";
     String MAPPER_PATH = "mapper_path";
     String XML_PATH = "xml_path";
@@ -56,6 +59,7 @@ public interface ConstVal {
     String TEMPLATE_MAPPER = "/templates/mapper.java";
     String TEMPLATE_XML = "/templates/mapper.xml";
     String TEMPLATE_SERVICE = "/templates/service.java";
+    String TEMPLATE_DAL = "/templates/dal.java";
     String TEMPLATE_SERVICE_IMPL = "/templates/serviceImpl.java";
     String TEMPLATE_CONTROLLER = "/templates/controller.java";
 
@@ -64,6 +68,8 @@ public interface ConstVal {
 
     String SUPER_MAPPER_CLASS = "com.baomidou.mybatisplus.core.mapper.BaseMapper";
     String SUPER_SERVICE_CLASS = "com.baomidou.mybatisplus.extension.service.IService";
+
+    String SUPER_DAL_CLASS = "com.baomidou.mybatisplus.extension.dal.BaseDal";
     String SUPER_SERVICE_IMPL_CLASS = "com.baomidou.mybatisplus.extension.service.impl.ServiceImpl";
 
 }

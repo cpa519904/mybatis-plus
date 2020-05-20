@@ -1,0 +1,20 @@
+package ${package.Dal};
+
+import ${package.Entity}.${entity};
+import ${superDalClass};
+
+/**
+ * <p>
+ * ${table.comment!} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(kotlin){ %>
+interface ${table.dalName} : ${superDalName}<${entity}>
+<% }else{ %>
+public interface ${table.dalName} extends ${superDalName}<${entity}> {
+
+}
+<% } %>

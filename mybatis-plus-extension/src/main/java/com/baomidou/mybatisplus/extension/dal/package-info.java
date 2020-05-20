@@ -13,21 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.generator.config.rules;
-
 /**
- * 生成文件类型
+ * 通用 Dal
  *
  * @author hubin
- * @since 2018-08-07
+ * @since 2018-06-08
  */
-public enum FileType {
-    ENTITY,
-    MAPPER,
-    XML,
-    DAL,
-    SERVICE,
-    SERVICE_IMPL,
-    CONTROLLER,
-    OTHER
-}
+package com.baomidou.mybatisplus.extension.dal;

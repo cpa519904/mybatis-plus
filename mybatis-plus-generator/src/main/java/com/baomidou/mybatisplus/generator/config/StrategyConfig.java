@@ -40,6 +40,9 @@ import java.util.Optional;
 @Data
 @Accessors(chain = true)
 public class StrategyConfig {
+    private boolean createService=true;
+    private boolean createController=true;
+    private boolean createDal=false;
     /**
      * 是否大写命名
      */
@@ -86,6 +89,14 @@ public class StrategyConfig {
      */
     private String superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
     /**
+     * 自定义继承的DAL类全称，带包名
+     */
+    private String superDalClass = ConstVal.SUPER_DAL_CLASS;
+    /**
+     * 自定义继承的DAL类全称，带包名
+     */
+    private String superDalName = ConstVal.BASEDAL;
+    /**
      * 自定义继承的Service类全称，带包名
      */
     private String superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
@@ -128,7 +139,7 @@ public class StrategyConfig {
      */
     @Deprecated
     private boolean entityBuilderModel = false;
-    
+
     /**
      * 【实体】是否为链式模型（默认 false）<br>
      * -----------------------------------<br>
@@ -137,7 +148,7 @@ public class StrategyConfig {
      * @since 3.3.2
      */
     private boolean chainModel = false;
-    
+
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
@@ -205,7 +216,7 @@ public class StrategyConfig {
     public boolean isCapitalModeNaming(String word) {
         return isCapitalMode && StringUtils.isCapitalMode(word);
     }
-    
+
     /**
      * 表名称包含指定前缀
      *
@@ -222,7 +233,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     /**
      * 表名称匹配表前缀
      *
@@ -238,7 +249,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     public NamingStrategy getColumnNaming() {
         // 未指定以 naming 策略为准
         return Optional.ofNullable(columnNaming).orElse(naming);
@@ -276,7 +287,7 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
-    
+
     /**
      * 设置实体父类
      *
@@ -334,17 +345,17 @@ public class StrategyConfig {
         this.superServiceClass = superServiceClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(Class<?> clazz) {
         this.superServiceImplClass = clazz.getName();
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
         this.superServiceImplClass = superServiceImplClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
         return this;
@@ -352,6 +363,20 @@ public class StrategyConfig {
 
     public StrategyConfig setSuperControllerClass(String superControllerClass) {
         this.superControllerClass = superControllerClass;
+        return this;
+    }
+
+    public StrategyConfig setSuperDalClass(String superDalClass) {
+        this.superDalClass = superDalClass;
+        return this;
+    }
+    public StrategyConfig setSuperDalClass(Class<?> clazz) {
+        this.superDalClass = clazz.getName();
+        return this;
+    }
+
+    public StrategyConfig setSuperDalName(String superDalName) {
+        this.superDalName = superDalName;
         return this;
     }
 
@@ -371,8 +396,8 @@ public class StrategyConfig {
             return StringUtils.camelToUnderline(field.getName());
         }).distinct().toArray(String[]::new);
     }
-    
-    
+
+
     /**
      * 是否为构建者模型
      *
@@ -383,7 +408,7 @@ public class StrategyConfig {
     public boolean isEntityBuilderModel() {
         return isChainModel();
     }
-    
+
     /**
      * 设置是否为构建者模型
      *
@@ -395,5 +420,5 @@ public class StrategyConfig {
     public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
         return setChainModel(entityBuilderModel);
     }
-    
+
 }

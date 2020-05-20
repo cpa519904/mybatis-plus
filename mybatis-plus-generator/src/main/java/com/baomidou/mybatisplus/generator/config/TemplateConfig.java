@@ -39,6 +39,8 @@ public class TemplateConfig {
 
     private String serviceImpl = ConstVal.TEMPLATE_SERVICE_IMPL;
 
+    private String dal = ConstVal.TEMPLATE_DAL;
+
     private String mapper = ConstVal.TEMPLATE_MAPPER;
 
     private String xml = ConstVal.TEMPLATE_XML;
@@ -48,7 +50,7 @@ public class TemplateConfig {
     public String getEntity(boolean kotlin) {
         return kotlin ? entityKt : entity;
     }
-    
+
     /**
      * 禁用模板
      *
@@ -75,10 +77,13 @@ public class TemplateConfig {
                     case CONTROLLER:
                         setController(null);
                         break;
+                    case DAL:
+                        setDal(null);
+                        break;
                 }
             }
         }
         return this;
     }
-    
+
 }

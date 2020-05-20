@@ -37,6 +37,26 @@ public class GlobalConfig {
     private String outputDir = "D://";
 
     /**
+     * 生成文件的输出Dal目录【默认 D 盘根目录】
+     */
+    private String outputDalDir = "D://";
+
+    /**
+     * 生成文件的输出Service目录【默认 D 盘根目录】
+     */
+    private String outputServiceDir = "D://";
+
+    /**
+     * 生成文件的输出ServiceImpl目录【默认 D 盘根目录】
+     */
+    private String outputServiceImplDir = "D://";
+
+    /**
+     * 生成文件的输出Controller目录【默认 D 盘根目录】
+     */
+    private String outputControllerDir = "D://";
+
+    /**
      * 是否覆盖已有文件
      */
     private boolean fileOverride = false;
@@ -93,6 +113,7 @@ public class GlobalConfig {
     private String mapperName;
     private String xmlName;
     private String serviceName;
+    private String dalName;
     private String serviceImplName;
     private String controllerName;
     /**

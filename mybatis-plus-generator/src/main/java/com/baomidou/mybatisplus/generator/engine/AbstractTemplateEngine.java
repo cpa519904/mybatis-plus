@@ -83,6 +83,9 @@ public abstract class AbstractTemplateEngine {
                         }
                     }
                 }
+                boolean createDal = tableInfo.isCreateDal();
+                boolean createController = tableInfo.isCreateController();
+                boolean createService = tableInfo.isCreateService();
                 // Mp.java
                 String entityName = tableInfo.getEntityName();
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
@@ -105,27 +108,41 @@ public abstract class AbstractTemplateEngine {
                         writer(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
-                // IMpService.java
-                if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
-                    String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.SERVICE, serviceFile)) {
-                        writer(objectMap, templateFilePath(template.getService()), serviceFile);
+                if(createDal){
+                    // dal.java
+                    if (null != tableInfo.getDalName() && null != pathInfo.get(ConstVal.DAL_PATH)) {
+                        String dalFile = String.format((pathInfo.get(ConstVal.DAL_PATH) + File.separator + tableInfo.getDalName() + suffixJavaOrKt()), entityName);
+                        if (isCreate(FileType.DAL, dalFile)) {
+                            writer(objectMap, templateFilePath(template.getDal()), dalFile);
+                        }
                     }
                 }
-                // MpServiceImpl.java
-                if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
-                    String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.SERVICE_IMPL, implFile)) {
-                        writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
+                if(createService){
+                    // IMpService.java
+                    if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
+                        String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
+                        if (isCreate(FileType.SERVICE, serviceFile)) {
+                            writer(objectMap, templateFilePath(template.getService()), serviceFile);
+                        }
+                    }
+                    // MpServiceImpl.java
+                    if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
+                        String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
+                        if (isCreate(FileType.SERVICE_IMPL, implFile)) {
+                            writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
+                        }
                     }
                 }
-                // MpController.java
-                if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
-                    String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.CONTROLLER, controllerFile)) {
-                        writer(objectMap, templateFilePath(template.getController()), controllerFile);
+                if(createController){
+                    // MpController.java
+                    if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
+                        String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
+                        if (isCreate(FileType.CONTROLLER, controllerFile)) {
+                            writer(objectMap, templateFilePath(template.getController()), controllerFile);
+                        }
                     }
                 }
+
             }
         } catch (Exception e) {
             logger.error("无法创建文件，请检查配置信息！", e);
@@ -192,7 +209,7 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     public Map<String, Object> getObjectMap(TableInfo tableInfo) {
-        Map<String, Object> objectMap = new HashMap<>(30);
+        Map<String, Object> objectMap = new HashMap<>(40);
         ConfigBuilder config = getConfigBuilder();
         if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
             objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
@@ -227,6 +244,8 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
         objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
         objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
+        objectMap.put("superDalClass", config.getSuperDalClass());
+        objectMap.put("superDalName", config.getSuperDalName());
         objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
         objectMap.put("superControllerClassPackage", verifyClassPacket(config.getSuperControllerClass()));
         objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));

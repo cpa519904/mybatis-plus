@@ -73,6 +73,8 @@ public class ConfigBuilder {
      * service超类定义
      */
     private String superServiceClass;
+    private String superDalClass;
+    private String superDalName;
     private String superServiceImplClass;
     private String superControllerClass;
     /**
@@ -133,9 +135,9 @@ public class ConfigBuilder {
         }
         // 包配置
         if (null == packageConfig) {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), new PackageConfig());
+            handlerPackage(this.template, this.globalConfig, new PackageConfig());
         } else {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig);
+            handlerPackage(this.template, this.globalConfig, packageConfig);
         }
         this.dataSourceConfig = dataSourceConfig;
         handlerDataSource(dataSourceConfig);
@@ -202,6 +204,13 @@ public class ConfigBuilder {
         return superControllerClass;
     }
 
+    public String getSuperDalClass() {
+        return superDalClass;
+    }
+
+    public String getSuperDalName() {
+        return superDalName;
+    }
 
     /**
      * 表信息
@@ -233,10 +242,27 @@ public class ConfigBuilder {
      * 处理包配置
      *
      * @param template  TemplateConfig
-     * @param outputDir
+     * @param globalConfig
      * @param config    PackageConfig
      */
-    private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
+    private void handlerPackage(TemplateConfig template,GlobalConfig globalConfig, PackageConfig config) {
+        String outputDir=globalConfig.getOutputDir();
+        String outputDalDir = globalConfig.getOutputDalDir();
+        String outputServiceDir = globalConfig.getOutputServiceDir();
+        String outputServiceImplDir = globalConfig.getOutputServiceImplDir();
+        String outputControllerDir = globalConfig.getOutputControllerDir();
+        if(org.apache.commons.lang3.StringUtils.isEmpty(outputDalDir)){
+            outputDalDir=outputDir;
+        }
+        if(org.apache.commons.lang3.StringUtils.isEmpty(outputServiceDir)){
+            outputServiceDir=outputDir;
+        }
+        if(org.apache.commons.lang3.StringUtils.isEmpty(outputServiceImplDir)){
+            outputServiceImplDir=outputDir;
+        }
+        if(org.apache.commons.lang3.StringUtils.isEmpty(outputControllerDir)){
+            outputControllerDir=outputDir;
+        }
         // 包信息
         packageInfo = new HashMap<>(8);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
@@ -246,6 +272,7 @@ public class ConfigBuilder {
         packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
         packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
         packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
+        packageInfo.put(ConstVal.DAL, joinPackage(config.getParent(), config.getDal()));
 
         // 自定义路径
         Map<String, String> configPathInfo = config.getPathInfo();
@@ -253,13 +280,14 @@ public class ConfigBuilder {
             pathInfo = configPathInfo;
         } else {
             // 生成路径信息
-            pathInfo = new HashMap<>(6);
+            pathInfo = new HashMap<>(7);
             setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
             setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
             setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
-            setPathInfo(pathInfo, template.getService(), outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
-            setPathInfo(pathInfo, template.getServiceImpl(), outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
-            setPathInfo(pathInfo, template.getController(), outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
+            setPathInfo(pathInfo, template.getDal(), outputDir, ConstVal.DAL_PATH, ConstVal.DAL);
+            setPathInfo(pathInfo, template.getService(), outputServiceDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
+            setPathInfo(pathInfo, template.getServiceImpl(), outputServiceImplDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
+            setPathInfo(pathInfo, template.getController(), outputControllerDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
         }
     }
 
@@ -303,11 +331,22 @@ public class ConfigBuilder {
         } else {
             superServiceClass = config.getSuperServiceClass();
         }
+        if (StringUtils.isBlank(config.getSuperServiceClass())) {
+            superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
+        } else {
+            superServiceClass = config.getSuperServiceClass();
+        }
         if (StringUtils.isBlank(config.getSuperServiceImplClass())) {
             superServiceImplClass = ConstVal.SUPER_SERVICE_IMPL_CLASS;
         } else {
             superServiceImplClass = config.getSuperServiceImplClass();
         }
+        if (StringUtils.isBlank(config.getSuperDalClass())) {
+            superDalClass = ConstVal.SUPER_DAL_CLASS;
+        } else {
+            superDalClass = config.getSuperDalClass();
+        }
+        superDalName = ConstVal.BASEDAL;
         if (StringUtils.isBlank(config.getSuperMapperClass())) {
             superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
         } else {
@@ -316,7 +355,7 @@ public class ConfigBuilder {
         superEntityClass = config.getSuperEntityClass();
         superControllerClass = config.getSuperControllerClass();
     }
-    
+
     /**
      * 处理表对应的类名称
      *
@@ -339,7 +378,13 @@ public class ConfigBuilder {
      */
     private List<TableInfo> processTable(List<TableInfo> tableList, StrategyConfig config) {
         String[] tablePrefix = config.getTablePrefix();
+        boolean createDal = config.isCreateDal();
+        boolean createController = config.isCreateController();
+        boolean createService = config.isCreateService();
         for (TableInfo tableInfo : tableList) {
+            tableInfo.setCreateDal(createDal);
+            tableInfo.setCreateService(createService);
+            tableInfo.setCreateController(createController);
             String entityName;
             INameConvert nameConvert = strategyConfig.getNameConvert();
             if (null != nameConvert) {
@@ -364,20 +409,36 @@ public class ConfigBuilder {
             } else {
                 tableInfo.setXmlName(entityName + ConstVal.MAPPER);
             }
-            if (StringUtils.isNotBlank(globalConfig.getServiceName())) {
-                tableInfo.setServiceName(String.format(globalConfig.getServiceName(), entityName));
-            } else {
-                tableInfo.setServiceName("I" + entityName + ConstVal.SERVICE);
+
+            if(createDal){
+                if (StringUtils.isNotBlank(globalConfig.getDalName())) {
+                    tableInfo.setDalName(String.format(globalConfig.getDalName(), entityName));
+                } else {
+                    tableInfo.setDalName(entityName + ConstVal.DAL);
+                }
             }
-            if (StringUtils.isNotBlank(globalConfig.getServiceImplName())) {
-                tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), entityName));
-            } else {
-                tableInfo.setServiceImplName(entityName + ConstVal.SERVICE_IMPL);
+
+
+            if(createService){
+                if (StringUtils.isNotBlank(globalConfig.getServiceName())) {
+                    tableInfo.setServiceName(String.format(globalConfig.getServiceName(), entityName));
+                } else {
+                    tableInfo.setServiceName("I" + entityName + ConstVal.SERVICE);
+                }
+                if (StringUtils.isNotBlank(globalConfig.getServiceImplName())) {
+                    tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), entityName));
+                } else {
+                    tableInfo.setServiceImplName(entityName + ConstVal.SERVICE_IMPL);
+                }
             }
-            if (StringUtils.isNotBlank(globalConfig.getControllerName())) {
-                tableInfo.setControllerName(String.format(globalConfig.getControllerName(), entityName));
-            } else {
-                tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
+
+            if(createController){
+                if (StringUtils.isNotBlank(globalConfig.getControllerName())) {
+                    tableInfo.setControllerName(String.format(globalConfig.getControllerName(), entityName));
+                } else {
+                    tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
+                }
+
             }
             // 检测导入包
             checkImportPackages(tableInfo);
@@ -809,4 +870,5 @@ public class ConfigBuilder {
         this.injectionConfig = injectionConfig;
         return this;
     }
+
 }

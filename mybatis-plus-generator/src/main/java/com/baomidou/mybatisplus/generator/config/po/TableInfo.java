@@ -46,6 +46,10 @@ public class TableInfo {
     private String mapperName;
     private String xmlName;
     private String serviceName;
+    private String dalName;
+    private boolean createService=true;
+    private boolean createController=true;
+    private boolean createDal=false;
     private String serviceImplName;
     private String controllerName;
     private List<TableField> fields;

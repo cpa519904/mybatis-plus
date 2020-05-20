@@ -47,6 +47,10 @@ public class PackageConfig {
      */
     private String entity = "entity";
     /**
+     * dal包名
+     */
+    private String dal = "dal";
+    /**
      * Service包名
      */
     private String service = "service";

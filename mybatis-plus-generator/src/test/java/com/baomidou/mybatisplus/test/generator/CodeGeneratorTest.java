@@ -17,14 +17,16 @@ package com.baomidou.mybatisplus.test.generator;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.InjectionConfig;
+import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.mysql.cj.jdbc.Driver;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 代码生成器 示例
@@ -33,6 +35,8 @@ import org.junit.jupiter.api.Test;
  * @since 2017/12/29
  */
 class CodeGeneratorTest {
+
+
 
     /**
      * 是否强制带上注解
@@ -53,75 +57,154 @@ class CodeGeneratorTest {
      */
     private boolean serviceClassNameStartWithI = true;
 
-    @Test
-    void generateCode() {
-        String packageName = "com.baomidou.springboot";
-        enableTableFieldAnnotation = false;
-        tableIdType = null;
-        generateByTables(packageName + ".noannoidtype", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = null;
-        generateByTables(packageName + ".noidtype", "user");
-        enableTableFieldAnnotation = false;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noanno", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".both", "user");
+    private String targetJavaProject = "";
+    private String baseJavaProject = "";
+    private String targetResourcesProject = "";
 
-        fieldPrefix = new String[]{"test"};
-        enableTableFieldAnnotation = false;
-        tableIdType = null;
-        generateByTables(packageName + ".noannoidtypewithprefix", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = null;
-        generateByTables(packageName + ".noidtypewithprefix", "user");
-        enableTableFieldAnnotation = false;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noannowithprefix", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".withannoidtypeprefix", "user");
+    private String packageName = "";
 
+    private String dbUrl = "";
+    private String username = "";
+    private String passWord = "";
+
+    //    @Test
+    public void generateCode() {
+        targetJavaProject = "/src/main/java/";
+        targetResourcesProject = "/src/main/resources/mapper/";
         serviceClassNameStartWithI = false;
-        generateByTables(packageName, "user");
+        packageName = "com.demo.dal";
+        dbUrl = "jdbc:mysql://127.0.0.1:3306/demo";
+        username = "root";
+        passWord = "123456";
+        baseJavaProject = "/demo-dal";
+        generateByTables(packageName, "t_demo");
+    }
+
+    public static void main(String[] args) {
+
+        CodeGeneratorTest codeGeneratorTest = new CodeGeneratorTest();
+        codeGeneratorTest.generateCode();
     }
 
     private void generateByTables(String packageName, String... tableNames) {
         GlobalConfig config = new GlobalConfig();
-        String dbUrl = "jdbc:mysql://localhost:3306/mybatis-plus";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL)
             .setUrl(dbUrl)
-            .setUsername("root")
-            .setPassword("")
-            .setDriverName(Driver.class.getName());
+            .setUsername(username)
+            .setPassword(passWord)
+            .setDriverName("com.mysql.cj.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
             .setCapitalMode(true)
-            .setEntityLombokModel(false)
+            .setEntityLombokModel(true)
             // .setDbColumnUnderline(true) 改为如下 2 个配置
             .setNaming(NamingStrategy.underline_to_camel)
             .setColumnNaming(NamingStrategy.underline_to_camel)
             .setEntityTableFieldAnnotationEnable(enableTableFieldAnnotation)
-            .setFieldPrefix(fieldPrefix)//test_id -> id, test_type -> type
+            .setFieldPrefix(fieldPrefix).setTablePrefix("t_")//test_id -> id, test_type -> type
+            .setCreateController(false)//
+            .setCreateDal(true)//
+            .setCreateService(false)//
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
-        config.setActiveRecord(false)
+
+//        String projectPath = System.getProperty("user.dir");
+//        String projectPath = System.getProperty("user.dir")+baseJavaProject;
+//        String projectAppPath = System.getProperty("user.dir")+"/activity-app";
+        String projectPath = "/Users/pingan.cui/cpa/workspace/basic/activity-base/"+baseJavaProject;
+
+
+        config.setActiveRecord(false)// 开启 activeRecord 模式
+            .setBaseResultMap(true)// XML ResultMap
+            .setBaseColumnList(true)// XML columList
+            .setSwagger2(false) // 是否生成 Swagger2 注解
             .setIdType(tableIdType)
-            .setAuthor("K神带你飞")
-            .setOutputDir("d:\\codeGen")
+            .setAuthor("pingan.cui")
+            .setOutputDir(projectPath+targetJavaProject)
+            .setOutputDir(projectPath+targetJavaProject)
+            .setOutputServiceDir(projectPath+targetJavaProject)
+            .setOutputServiceImplDir(projectPath+targetJavaProject)
+//            .setOutputControllerDir(projectAppPath+targetJavaProject)
             .setFileOverride(true);
         if (!serviceClassNameStartWithI) {
             config.setServiceName("%sService");
+            config.setEntityName("%sModel");
+            config.setControllerName("%sApp");
         }
+
+
+        // 包配置
+        PackageConfig pc = new PackageConfig();
+        pc.setModuleName("");
+        pc.setParent(packageName);
+
+        // 自定义配置
+        InjectionConfig cfg = new InjectionConfig() {
+            @Override
+            public void initMap() {
+                // to do nothing
+            }
+        };
+        // 如果模板引擎是 velocity
+        String templatePath = "/templates/mapper.xml.vm";
+
+        // 自定义输出配置
+        List<FileOutConfig> focList = new ArrayList<>();
+        // 自定义配置会被优先输出
+        focList.add(new FileOutConfig(templatePath) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                tableInfo.setCreateController(false);
+                tableInfo.setCreateService(false);
+                tableInfo.setCreateDal(true);
+                // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
+                String moduleName = pc.getModuleName();
+                if(StringUtils.isEmpty(moduleName)){
+                    return projectPath + targetResourcesProject + pc.getModuleName()
+                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                }else{
+                    return projectPath + targetResourcesProject + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                }
+
+
+            }
+        });
+        /*
+        cfg.setFileCreate(new IFileCreate() {
+            @Override
+            public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
+                // 判断自定义文件夹是否需要创建
+                checkDir("调用默认方法创建的目录");
+                return false;
+            }
+        });
+        */
+        cfg.setFileOutConfigList(focList);
+
         new AutoGenerator().setGlobalConfig(config)
             .setDataSource(dataSourceConfig)
             .setStrategy(strategyConfig)
-            .setPackageInfo(
-                new PackageConfig()
-                    .setParent(packageName)
-                    .setController("controller")
-                    .setEntity("entity")
-            ).execute();
+            .setPackageInfo(pc)
+            .setCfg(cfg)
+            .setTemplate(
+                // 关闭默认 xml 生成，调整生成 至 根目录
+                new TemplateConfig().setXml(null)
+                // 自定义模板配置，模板可以参考源码 /mybatis-plus/src/main/resources/template 使用 copy
+                // 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
+                // .setController("...");
+                // .setEntity("...");
+                // .setMapper("...");
+                // .setXml("...");
+                // .setService("...");
+                // .setServiceImpl("...");
+            )
+//            .setPackageInfo(
+//                new PackageConfig()
+//                    .setParent(packageName)
+//                    .setController("controller")
+//                    .setEntity("model")
+//                    .setXml("/Users/pingan.cui/cpa/workspace/sourceCode/ddd-spread-activity/src/main/resources")
+//            )
+            .execute();
     }
 }
