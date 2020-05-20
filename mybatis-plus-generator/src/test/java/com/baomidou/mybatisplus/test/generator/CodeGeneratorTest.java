@@ -109,9 +109,7 @@ class CodeGeneratorTest {
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
 
 //        String projectPath = System.getProperty("user.dir");
-//        String projectPath = System.getProperty("user.dir")+baseJavaProject;
-//        String projectAppPath = System.getProperty("user.dir")+"/activity-app";
-        String projectPath = "/Users/pingan.cui/cpa/workspace/basic/activity-base/"+baseJavaProject;
+        String projectPath = System.getProperty("user.dir")+baseJavaProject;
 
 
         config.setActiveRecord(false)// 开启 activeRecord 模式
