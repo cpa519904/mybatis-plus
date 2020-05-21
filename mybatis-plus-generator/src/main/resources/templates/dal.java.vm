@@ -1,5 +1,7 @@
 package ${package.Dal};
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${superDalClass};
@@ -20,64 +22,71 @@ import java.util.List;
 open class ${table.dalName} : ${superDalName}<${table.mapperName}, ${entity}>(){
     @Override
     public int insert(${entity} entity) {
-    return super.insert(entity);
+        return super.insert(entity);
     }
 
     @Override
     public int deleteById(Serializable id) {
-    return super.deleteById(id);
+        return super.deleteById(id);
     }
 
     @Override
     public int updateById(${entity} entity) {
-    return super.updateById(entity);
+        return super.updateById(entity);
     }
 
     @Override
-    public ${entity} selectOne(Wrapper<${entity}> queryWrapper) {
-    return super.selectOne(queryWrapper);
+    public ${entity} selectOne(${entity} entity) {
+        return super.selectOne(Wrappers.query(entity));
     }
 
     @Override
-    public Integer selectCount(Wrapper<${entity}> queryWrapper) {
-    return super.selectCount(queryWrapper);
+    public Integer selectCount(${entity} entity) {
+        return super.selectCount(Wrappers.query(entity));
     }
 
     @Override
-    public List<${entity}> selectList(Wrapper<${entity}> queryWrapper) {
-    return super.selectList(queryWrapper);
+    public List<${entity}> selectList(${entity} entity) {
+        return super.selectList(Wrappers.query(entity));
     }
+    public Page<SpreadAciviyUv>  selectPage(Page page,${entity} entity) {
+        return super.selectPage(page,Wrappers.query(entity));
     }
+}
 #else
 public class ${table.dalName} extends ${superDalName}<${table.mapperName}, ${entity}> {
     @Override
     public int insert(${entity} entity) {
-    return super.insert(entity);
+        return super.insert(entity);
     }
 
     @Override
     public int deleteById(Serializable id) {
-    return super.deleteById(id);
+        return super.deleteById(id);
     }
 
     @Override
     public int updateById(${entity} entity) {
-    return super.updateById(entity);
+        return super.updateById(entity);
     }
 
     @Override
-    public ${entity} selectOne(Wrapper<${entity}> queryWrapper) {
-    return super.selectOne(queryWrapper);
+    public ${entity} selectOne(${entity} entity) {
+        return super.selectOne(Wrappers.query(entity));
     }
 
     @Override
-    public Integer selectCount(Wrapper<${entity}> queryWrapper) {
-    return super.selectCount(queryWrapper);
+    public Integer selectCount(${entity} entity) {
+        return super.selectCount(Wrappers.query(entity));
     }
 
     @Override
-    public List<${entity}> selectList(Wrapper<${entity}> queryWrapper) {
-    return super.selectList(queryWrapper);
+    public List<${entity}> selectList(${entity} entity) {
+        return super.selectList(Wrappers.query(entity));
     }
+    public Page<SpreadAciviyUv>  selectPage(Page page,${entity} entity) {
+        return super.selectPage(page,Wrappers.query(entity));
+    }
+
 }
 #end
