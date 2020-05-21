@@ -120,4 +120,8 @@ public class GlobalConfig {
      * 指定生成的主键的ID类型
      */
     private IdType idType;
+
+    private boolean createService=true;
+    private boolean createController=true;
+    private boolean createDal=false;
 }

@@ -1,10 +1,12 @@
 package ${package.Dal};
-
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import ${package.Entity}.${entity};
 import ${package.Mapper}.${table.mapperName};
 import ${superDalClass};
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
+import java.util.List;
 /**
  * <p>
  * $!{table.comment} 数据访问类
@@ -16,10 +18,66 @@ import org.springframework.stereotype.Repository;
 @Repository
 #if(${kotlin})
 open class ${table.dalName} : ${superDalName}<${table.mapperName}, ${entity}>(){
+    @Override
+    public int insert(${entity} entity) {
+    return super.insert(entity);
+    }
 
+    @Override
+    public int deleteById(Serializable id) {
+    return super.deleteById(id);
+    }
+
+    @Override
+    public int updateById(${entity} entity) {
+    return super.updateById(entity);
+    }
+
+    @Override
+    public ${entity} selectOne(Wrapper<${entity}> queryWrapper) {
+    return super.selectOne(queryWrapper);
+    }
+
+    @Override
+    public Integer selectCount(Wrapper<${entity}> queryWrapper) {
+    return super.selectCount(queryWrapper);
+    }
+
+    @Override
+    public List<${entity}> selectList(Wrapper<${entity}> queryWrapper) {
+    return super.selectList(queryWrapper);
+    }
     }
 #else
 public class ${table.dalName} extends ${superDalName}<${table.mapperName}, ${entity}> {
+    @Override
+    public int insert(${entity} entity) {
+    return super.insert(entity);
+    }
 
+    @Override
+    public int deleteById(Serializable id) {
+    return super.deleteById(id);
+    }
+
+    @Override
+    public int updateById(${entity} entity) {
+    return super.updateById(entity);
+    }
+
+    @Override
+    public ${entity} selectOne(Wrapper<${entity}> queryWrapper) {
+    return super.selectOne(queryWrapper);
+    }
+
+    @Override
+    public Integer selectCount(Wrapper<${entity}> queryWrapper) {
+    return super.selectCount(queryWrapper);
+    }
+
+    @Override
+    public List<${entity}> selectList(Wrapper<${entity}> queryWrapper) {
+    return super.selectList(queryWrapper);
+    }
 }
 #end

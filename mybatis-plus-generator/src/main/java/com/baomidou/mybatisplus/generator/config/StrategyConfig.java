@@ -40,9 +40,6 @@ import java.util.Optional;
 @Data
 @Accessors(chain = true)
 public class StrategyConfig {
-    private boolean createService=true;
-    private boolean createController=true;
-    private boolean createDal=false;
     /**
      * 是否大写命名
      */
