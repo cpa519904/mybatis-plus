@@ -35,21 +35,18 @@ open class ${table.dalName} : ${superDalName}<${table.mapperName}, ${entity}>(){
         return super.updateById(entity);
     }
 
-    @Override
     public ${entity} selectOne(${entity} entity) {
         return super.selectOne(Wrappers.query(entity));
     }
 
-    @Override
     public Integer selectCount(${entity} entity) {
         return super.selectCount(Wrappers.query(entity));
     }
 
-    @Override
     public List<${entity}> selectList(${entity} entity) {
         return super.selectList(Wrappers.query(entity));
     }
-    public Page<SpreadAciviyUv>  selectPage(Page page,${entity} entity) {
+    public Page<${entity}>  selectPage(Page page,${entity} entity) {
         return super.selectPage(page,Wrappers.query(entity));
     }
 }
@@ -70,21 +67,18 @@ public class ${table.dalName} extends ${superDalName}<${table.mapperName}, ${ent
         return super.updateById(entity);
     }
 
-    @Override
     public ${entity} selectOne(${entity} entity) {
         return super.selectOne(Wrappers.query(entity));
     }
 
-    @Override
     public Integer selectCount(${entity} entity) {
         return super.selectCount(Wrappers.query(entity));
     }
 
-    @Override
     public List<${entity}> selectList(${entity} entity) {
         return super.selectList(Wrappers.query(entity));
     }
-    public Page<SpreadAciviyUv>  selectPage(Page page,${entity} entity) {
+    public Page<${entity}>  selectPage(Page page,${entity} entity) {
         return super.selectPage(page,Wrappers.query(entity));
     }
 
