@@ -102,14 +102,14 @@ class CodeGeneratorTest {
             .setNaming(NamingStrategy.underline_to_camel)
             .setColumnNaming(NamingStrategy.underline_to_camel)
             .setEntityTableFieldAnnotationEnable(enableTableFieldAnnotation)
-            .setFieldPrefix(fieldPrefix).setTablePrefix("t_")//test_id -> id, test_type -> type
-            .setCreateController(false)//
-            .setCreateDal(true)//
-            .setCreateService(false)//
+            .setFieldPrefix(fieldPrefix).setTablePrefix("")//test_id -> id, test_type -> type
+
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
 
 //        String projectPath = System.getProperty("user.dir");
-        String projectPath = System.getProperty("user.dir")+baseJavaProject;
+//        String projectPath = System.getProperty("user.dir")+baseJavaProject;
+
+        String projectPath = "/Users/pingan.cui/cpa/workspace/sourceCode/mybatis-plus"+baseJavaProject;
 
 
         config.setActiveRecord(false)// 开启 activeRecord 模式
@@ -123,11 +123,14 @@ class CodeGeneratorTest {
             .setOutputServiceDir(projectPath+targetJavaProject)
             .setOutputServiceImplDir(projectPath+targetJavaProject)
 //            .setOutputControllerDir(projectAppPath+targetJavaProject)
-            .setFileOverride(true);
+            .setFileOverride(true)
+            .setCreateController(false)//
+            .setCreateDal(true)//
+            .setCreateService(true);//
         if (!serviceClassNameStartWithI) {
-            config.setServiceName("%sService");
+//            config.setServiceName("%sService");
             config.setEntityName("%sModel");
-            config.setControllerName("%sApp");
+//            config.setControllerName("%sApp");
         }
 
 
@@ -152,9 +155,6 @@ class CodeGeneratorTest {
         focList.add(new FileOutConfig(templatePath) {
             @Override
             public String outputFile(TableInfo tableInfo) {
-                tableInfo.setCreateController(false);
-                tableInfo.setCreateService(false);
-                tableInfo.setCreateDal(true);
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
                 String moduleName = pc.getModuleName();
                 if(StringUtils.isEmpty(moduleName)){
